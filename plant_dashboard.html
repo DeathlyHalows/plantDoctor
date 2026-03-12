@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Smart Plant Monitor</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#e8f5e9;
+text-align:center;
+}
+
+h1{
+color:#2e7d32;
+}
+
+.card{
+background:white;
+padding:20px;
+margin:10px;
+border-radius:10px;
+display:inline-block;
+width:200px;
+box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+
+.value{
+font-size:28px;
+font-weight:bold;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+font-size:18px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.on{
+background:#4caf50;
+color:white;
+}
+
+.off{
+background:#f44336;
+color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🌱 Smart Plant Monitoring System</h1>
+
+<div class="card">
+Temperature
+<div id="temp" class="value">--</div>
+</div>
+
+<div class="card">
+Humidity
+<div id="hum" class="value">--</div>
+</div>
+
+<div class="card">
+Soil Moisture
+<div id="soil" class="value">--</div>
+</div>
+
+<div class="card">
+Light
+<div id="light" class="value">--</div>
+</div>
+
+<div class="card">
+Pump Status
+<div id="pump" class="value">--</div>
+</div>
+
+<div class="card">
+Alert
+<div id="alert" class="value">--</div>
+</div>
+
+<br><br>
+
+<h2>Manual Pump Control</h2>
+
+<button class="on" onclick="pumpOn()">Pump ON</button>
+<button class="off" onclick="pumpOff()">Pump OFF</button>
+
+<script>
+
+const channelID = "3297624";
+const readKey = "OQMC8NHU5IMSIT2P";
+
+function loadData(){
+
+fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readKey}`)
+.then(response => response.json())
+.then(data => {
+
+document.getElementById("temp").innerHTML = data.field1 + " °C";
+document.getElementById("hum").innerHTML = data.field2 + " %";
+document.getElementById("soil").innerHTML = data.field3;
+document.getElementById("light").innerHTML = data.field4;
+
+let pumpState = data.field5;
+
+if(pumpState == 1)
+document.getElementById("pump").innerHTML = "ON";
+else
+document.getElementById("pump").innerHTML = "OFF";
+
+document.getElementById("alert").innerHTML = data.field7;
+
+});
+
+}
+
+function pumpOn(){
+
+fetch(`https://api.thingspeak.com/update?api_key=YOUR_WRITE_API_KEY&field6=1`);
+
+}
+
+function pumpOff(){
+
+fetch(`https://api.thingspeak.com/update?api_key=YOUR_WRITE_API_KEY&field6=2`);
+
+}
+
+setInterval(loadData,5000);
+
+loadData();
+
+</script>
+
+</body>
+</html>
