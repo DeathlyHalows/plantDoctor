@@ -96,9 +96,14 @@ Alert
 
 <script>
 
+// ===== USER SETTINGS =====
 const channelID = "3297624";
 const readKey = "OQMC8NHU5IMSIT2P";
+const writeKey = "PBIEM9ME3NUKHHG8";
+// =========================
 
+
+// Load sensor data
 function loadData(){
 
 fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readKey}`)
@@ -123,18 +128,24 @@ document.getElementById("alert").innerHTML = data.field7;
 
 }
 
+
+// Manual pump ON
 function pumpOn(){
 
-fetch(`https://api.thingspeak.com/update?api_key=YOUR_WRITE_API_KEY&field6=1`);
+fetch(`https://api.thingspeak.com/update?api_key=${writeKey}&field6=1`);
 
 }
 
+
+// Manual pump OFF
 function pumpOff(){
 
-fetch(`https://api.thingspeak.com/update?api_key=YOUR_WRITE_API_KEY&field6=2`);
+fetch(`https://api.thingspeak.com/update?api_key=${writeKey}&field6=2`);
 
 }
 
+
+// Refresh every 5 seconds
 setInterval(loadData,5000);
 
 loadData();
